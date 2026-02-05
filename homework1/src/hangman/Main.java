@@ -25,8 +25,11 @@ public class Main {
         if (category == null) {
             category = readCategory(scanner, dictionary);
         }
-        if (category == null || !dictionary.hasCategory(category)) {
+        if (category == null) {
             category = dictionary.randomCategory();
+        } else if (!dictionary.hasCategory(category)) {
+            System.out.println("Такой категории нет. Игра не запускается.");
+            return;
         }
 
         if (difficulty == null) {
