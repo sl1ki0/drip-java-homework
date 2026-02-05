@@ -45,6 +45,8 @@ public class Main {
         int maxErrors = errorsForDifficulty(difficulty);
         GameSession session = new GameSession(word, maxErrors);
         HangmanRenderer renderer = new HangmanRenderer();
+        String hint = dictionary.hintFor(word);
+        boolean hintUsed = false;
 
         System.out.println("Категория: " + category);
         System.out.println("Сложность: " + difficulty);
@@ -55,9 +57,20 @@ public class Main {
             System.out.println(renderer.render(session.getErrors(), session.getMaxErrors()));
             System.out.println("Слово: " + session.progressString());
             System.out.println("Осталось попыток: " + (session.getMaxErrors() - session.getErrors()));
-            System.out.print("Введите букву: ");
+            System.out.print("Введите букву (или '?' для подсказки): ");
 
             String input = scanner.nextLine().trim().toLowerCase(Locale.ROOT);
+            if ("?".equals(input)) {
+                if (hint == null) {
+                    System.out.println("Подсказка недоступна.");
+                } else if (hintUsed) {
+                    System.out.println("Подсказка уже использована.");
+                } else {
+                    System.out.println("Подсказка: " + hint);
+                    hintUsed = true;
+                }
+                continue;
+            }
             if (input.length() != 1 || !Character.isLetter(input.charAt(0))) {
                 System.out.println("Введите одну букву.");
                 continue;

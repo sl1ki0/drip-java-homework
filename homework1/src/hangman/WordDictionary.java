@@ -2,20 +2,18 @@ package hangman;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
 public class WordDictionary {
     private final Map<String, String[]> categories;
+    private final Map<String, String> hints;
     private final Random random = new Random();
 
     public WordDictionary() {
-        categories = Map.of(
-                "animals", new String[]{"cat", "dog", "elephant", "giraffe", "tiger", "wolf", "rabbit", "dolphin"},
-                "food", new String[]{"bread", "pizza", "carrot", "banana", "pasta", "tomato", "cheese", "strawberry"},
-                "sports", new String[]{"tennis", "football", "boxing", "swimming", "hockey", "cycling", "basketball"},
-                "tech", new String[]{"keyboard", "monitor", "network", "program", "internet", "processor", "database"}
-        );
+        categories = WordData.categories();
+        hints = WordData.hints();
     }
 
     public String randomCategory() {
@@ -45,6 +43,13 @@ public class WordDictionary {
         }
 
         return filtered.get(random.nextInt(filtered.size()));
+    }
+
+    public String hintFor(String word) {
+        if (word == null) {
+            return null;
+        }
+        return hints.get(word.toLowerCase(Locale.ROOT));
     }
 
     private boolean matchesDifficulty(String word, String difficulty) {
