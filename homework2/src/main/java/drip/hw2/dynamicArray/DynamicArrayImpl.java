@@ -64,11 +64,12 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public boolean addAll(DynamicArray c) {
-        if (c.isEmpty()) {
+        int elementsToAdd = c.size();
+        if (elementsToAdd == 0) {
             return false;
         }
 
-        for (int i = 0; i < c.size(); i++) {
+        for (int i = 0; i < elementsToAdd; i++) {
             this.add(c.get(i));
         }
 
@@ -81,7 +82,8 @@ public class DynamicArrayImpl implements DynamicArray {
             throw new IndexOutOfBoundsException();
         }
 
-        if (c.isEmpty()) {
+        int elementsToAdd = c.size();
+        if (elementsToAdd == 0) {
             return false;
         }
 
@@ -91,7 +93,7 @@ public class DynamicArrayImpl implements DynamicArray {
             rebuilt.add(this.array[i]);
         }
 
-        for (int i = 0; i < c.size(); i++) {
+        for (int i = 0; i < elementsToAdd; i++) {
             rebuilt.add(c.get(i));
         }
 
