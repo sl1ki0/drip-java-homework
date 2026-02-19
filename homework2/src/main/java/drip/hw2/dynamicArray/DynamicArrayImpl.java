@@ -25,7 +25,7 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public boolean isEmpty() {
-        return countElements != 0;
+        return countElements == 0;
     }
 
     @Override
@@ -139,7 +139,7 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public void sort(){
-
+        Arrays.sort(this.array, 0, this.countElements);
     }
 
     @Override
@@ -168,6 +168,20 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public void add(int index, int element) {
+        if (index < 0 || index > this.countElements) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (this.array.length == this.countElements) {
+            ExpandArrayTwice();
+        }
+
+        for (int i = this.countElements; i > index; i--) {
+            this.array[i] = this.array[i - 1];
+        }
+
+        this.array[index] = element;
+        this.countElements++;
     }
 
     @Override
@@ -187,11 +201,21 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public int indexOf(int element) {
-        return 0;
+        for (int i = 0; i < this.countElements; i++) {
+            if (this.array[i] == element) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public int lastIndexOf(int element) {
-        return 0;
+        for (int i = this.countElements - 1; i >= 0; i--) {
+            if (this.array[i] == element) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
