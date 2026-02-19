@@ -3,7 +3,7 @@ package main.java.drip.hw2.expr;
 public sealed interface Expr {
     double evaluate();
 
-    public record Constant(int a) implements Expr {
+    public record Constant(double a) implements Expr {
         @Override
         public double evaluate() {
             return a;
