@@ -15,7 +15,8 @@ public class DynamicArrayImpl implements DynamicArray {
     }
 
     private void ExpandArrayTwice()  {
-        this.array = Arrays.copyOf(this.array, this.array.length * 2);
+        int newLength = this.array.length == 0 ? 1 : this.array.length * 2;
+        this.array = Arrays.copyOf(this.array, newLength);
     }
 
     @Override
@@ -111,10 +112,12 @@ public class DynamicArrayImpl implements DynamicArray {
         }
 
         boolean isChanged = false;
-        for (int i = 0; i < this.countElements; i++) {
+        for (int i = 0; i < this.countElements; ) {
             if (c.contains(this.array[i])) {
                 isChanged = true;
                 this.remove(i);
+            } else {
+                i++;
             }
         }
 
@@ -124,14 +127,18 @@ public class DynamicArrayImpl implements DynamicArray {
     @Override
     public boolean retainAll(DynamicArray c) {
         if (c.isEmpty()) {
-            return false;
+            boolean wasNotEmpty = this.countElements > 0;
+            this.clear();
+            return wasNotEmpty;
         }
 
         boolean isChanged = false;
-        for (int i = 0; i < this.countElements; i++) {
+        for (int i = 0; i < this.countElements; ) {
             if (!c.contains(this.array[i])) {
                 isChanged = true;
                 this.remove(i);
+            } else {
+                i++;
             }
         }
         return isChanged;
