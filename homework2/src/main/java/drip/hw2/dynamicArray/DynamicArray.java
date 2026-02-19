@@ -117,7 +117,7 @@ public interface DynamicArray {
      * @return удаленный элемент
      * @throws IndexOutOfBoundsException если индекс выходит за пределы массива
      */
-    long remove(int index);
+    int remove(int index);
 
     /**
      * Возвращает индекс первого вхождения указанного элемента в массиве.

@@ -106,12 +106,35 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public boolean removeAll(DynamicArray c) {
-        return false;
+        if (c.isEmpty()) {
+            return false;
+        }
+
+        boolean isChanged = false;
+        for (int i = 0; i < this.countElements; i++) {
+            if (c.contains(this.array[i])) {
+                isChanged = true;
+                this.remove(i);
+            }
+        }
+
+        return isChanged;
     }
 
     @Override
     public boolean retainAll(DynamicArray c) {
-        return false;
+        if (c.isEmpty()) {
+            return false;
+        }
+
+        boolean isChanged = false;
+        for (int i = 0; i < this.countElements; i++) {
+            if (!c.contains(this.array[i])) {
+                isChanged = true;
+                this.remove(i);
+            }
+        }
+        return isChanged;
     }
 
     @Override
@@ -121,7 +144,8 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public void clear() {
-
+        this.countElements = 0;
+        this.array = new int[1];
     }
 
     @Override
@@ -136,12 +160,21 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public void add(int index, int element) {
-
     }
 
     @Override
-    public long remove(int index) {
-        return 0;
+    public int remove(int index) {
+        if (index < 0 || index >= this.countElements) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        int removedElement = this.array[index];
+        for (int i = index; i < this.countElements - 1; i++) {
+            this.array[i] = this.array[i + 1];
+        }
+        this.countElements--;
+
+        return removedElement;
     }
 
     @Override
