@@ -150,12 +150,20 @@ public class DynamicArrayImpl implements DynamicArray {
 
     @Override
     public int get(int index) {
-        return 0;
+        if (index < 0 || index >= this.countElements) {
+            throw new IndexOutOfBoundsException();
+        }
+        return this.array[index];
     }
 
     @Override
     public int set(int index, int element) {
-        return 0;
+        if (index < 0 || index >= this.countElements) {
+            throw new IndexOutOfBoundsException();
+        }
+        int oldValue = this.array[index];
+        this.array[index] = element;
+        return oldValue;
     }
 
     @Override
