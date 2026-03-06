@@ -41,12 +41,12 @@ class LogAnalyzerTest {
         assertEquals(150.0, result.responseSizeInBytes().average(), 0.0001);
         assertEquals(300.0, result.responseSizeInBytes().max(), 0.0001);
         assertEquals(300.0, result.responseSizeInBytes().p95(), 0.0001);
-        assertEquals("/a", result.resources().get(0).resource());
-        assertEquals(2, result.resources().get(0).totalRequestsCount());
-        assertEquals(200, result.responseCodes().get(0).code());
-        assertEquals(3, result.responseCodes().get(0).totalResponsesCount());
+        assertEquals("/a", result.resources().getFirst().resource());
+        assertEquals(2, result.resources().getFirst().totalRequestsCount());
+        assertEquals(200, result.responseCodes().getFirst().code());
+        assertEquals(3, result.responseCodes().getFirst().totalResponsesCount());
         assertEquals(2, result.requestsPerDate().size());
-        assertEquals(50.0, result.requestsPerDate().get(0).totalRequestsPercentage(), 0.0001);
+        assertEquals(50.0, result.requestsPerDate().getFirst().totalRequestsPercentage(), 0.0001);
 
         String json = ReportRenderer.render(result, arguments);
         assertTrue(json.contains("\"totalRequestsCount\": 4"));
@@ -79,6 +79,6 @@ class LogAnalyzerTest {
         LogAnalysisResult result = new LogAnalyzer().analyze(arguments);
 
         assertEquals(1, result.totalRequestsCount());
-        assertEquals("/b", result.resources().get(0).resource());
+        assertEquals("/b", result.resources().getFirst().resource());
     }
 }
