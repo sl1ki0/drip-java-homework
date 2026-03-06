@@ -2,6 +2,7 @@ package drip.hw3.argumentParser;
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
@@ -64,27 +65,46 @@ public final class ParserUtils {
     }
 
     public static void validateDateRange(String from, String to) {
-        Instant fromInstant = parseDateArgument(from, "--from");
-        Instant toInstant = parseDateArgument(to, "--to");
+        Instant fromInstant = parseFromBoundary(from);
+        Instant toInstant = parseToBoundary(to);
 
         if (fromInstant != null && toInstant != null && !fromInstant.isBefore(toInstant)) {
             throw new IllegalArgumentException("Параметр --from должен быть меньше --to");
         }
     }
 
-    private static Instant parseDateArgument(String value, String argumentName) {
+    public static Instant parseFromBoundary(String value) {
+        ParsedDate parsedDate = parseDateArgument(value, "--from");
+        return parsedDate == null ? null : parsedDate.fromInclusive();
+    }
+
+    public static Instant parseToBoundary(String value) {
+        ParsedDate parsedDate = parseDateArgument(value, "--to");
+        return parsedDate == null ? null : parsedDate.toInclusive();
+    }
+
+    private static ParsedDate parseDateArgument(String value, String argumentName) {
         if (value == null) {
             return null;
         }
 
         try {
+            LocalDate date = LocalDate.parse(value);
+            return new ParsedDate(
+                    date.atStartOfDay().toInstant(ZoneOffset.UTC),
+                    date.plusDays(1).atStartOfDay().minusNanos(1).toInstant(ZoneOffset.UTC)
+            );
+        } catch (DateTimeParseException ignored) {
+        }
+
+        try {
             LocalDateTime dateTime = LocalDateTime.parse(value);
-            return dateTime.toInstant(ZoneOffset.UTC);
+            Instant instant = dateTime.toInstant(ZoneOffset.UTC);
+            return new ParsedDate(instant, instant);
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Некорректное значение " + argumentName + ". Ожидается LocalDateTime");
+            throw new IllegalArgumentException("Некорректное значение " + argumentName + ". Ожидается дата в формате ISO8601");
         }
     }
-
 
     private static String formatExtensions(String... extensions) {
         return Arrays.stream(extensions)
@@ -93,4 +113,6 @@ public final class ParserUtils {
                 .reduce((left, right) -> left + ", " + right)
                 .orElse("");
     }
+
+    private record ParsedDate(Instant fromInclusive, Instant toInclusive) {}
 }
