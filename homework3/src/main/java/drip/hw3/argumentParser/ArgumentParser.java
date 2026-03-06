@@ -9,7 +9,7 @@ public final class ArgumentParser {
 
     public static ParsedArguments parseArguments(String[] args) {
         if (args == null || args.length == 0) {
-            throw ParserUtils.invalidArgument("Аргументы не переданы");
+            throw new IllegalArgumentException("Аргументы не переданы");
         }
 
         List<String> pathArguments = new ArrayList<>();
@@ -42,12 +42,12 @@ public final class ArgumentParser {
                 case "--to" ->
                     to = ParserUtils.readSingleArgument(args, ++index, current);
 
-                default -> throw ParserUtils.invalidArgument("Неизвестный аргумент: " + current);
+                default -> throw new IllegalArgumentException("Неизвестный аргумент: " + current);
             }
         }
 
         if (pathArguments.isEmpty()) {
-            throw ParserUtils.invalidArgument("Нужно указать хотя бы один путь через --path или -p");
+            throw new IllegalArgumentException("Нужно указать хотя бы один путь через --path или -p");
         }
 
         ParserUtils.requireNonBlank(format, "Параметр --format обязателен");
