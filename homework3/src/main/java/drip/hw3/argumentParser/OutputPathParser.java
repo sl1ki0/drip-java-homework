@@ -16,7 +16,7 @@ public final class OutputPathParser {
         String expectedExtension = switch (ParserUtils.normalizeValue(format)) {
             case "markdown" -> "md";
             case "json" -> "json";
-            default -> throw new IllegalArgumentException("Неподдерживаемый формат: " + format);
+            default -> throw ParserUtils.invalidArgument("Неподдерживаемый формат: " + format);
         };
 
         ParserUtils.validateExtension(outputPath, expectedExtension);
@@ -29,36 +29,35 @@ public final class OutputPathParser {
     private static void validateFileDoesNotExist(Path path) {
 
         if (Files.exists(path)) {
-            throw new IllegalArgumentException(
+            throw ParserUtils.invalidArgument(
                     "Файл уже существует: " + path
             );
         }
     }
-
     private static void validateDirectory(Path path) {
 
         Path parent = path.toAbsolutePath().getParent();
 
         if (parent == null) {
-            throw new IllegalArgumentException(
+            throw ParserUtils.invalidArgument(
                     "Не удалось определить директорию для выходного файла"
             );
         }
 
         if (!Files.exists(parent)) {
-            throw new IllegalArgumentException(
+            throw ParserUtils.invalidArgument(
                     "Указанная директория не существует: " + parent
             );
         }
 
         if (!Files.isDirectory(parent)) {
-            throw new IllegalArgumentException(
+            throw ParserUtils.invalidArgument(
                     "Указанный путь не является директорией: " + parent
             );
         }
 
         if (!Files.isWritable(parent)) {
-            throw new IllegalArgumentException(
+            throw ParserUtils.invalidArgument(
                     "Нет прав на запись в директорию: " + parent
             );
         }

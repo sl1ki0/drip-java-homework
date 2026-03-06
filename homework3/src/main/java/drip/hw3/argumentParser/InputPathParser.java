@@ -23,11 +23,11 @@ public final class InputPathParser {
             Path path = Paths.get(pathArg);
 
             if (!Files.exists(path)) {
-                throw new IllegalArgumentException("Файл не найден: " + pathArg);
+                throw ParserUtils.invalidArgument("Файл не найден: " + pathArg);
             }
 
             if (!Files.isRegularFile(path)) {
-                throw new IllegalArgumentException("Это не файл: " + pathArg);
+                throw ParserUtils.invalidArgument("Это не файл: " + pathArg);
             }
 
             validateLogExtension(path);
@@ -35,7 +35,7 @@ public final class InputPathParser {
         }
 
         if (result.isEmpty()) {
-            throw new IllegalArgumentException("По указанному пути ничего не найдено: " + pathArg);
+            throw ParserUtils.invalidArgument("По указанному пути ничего не найдено: " + pathArg);
         }
 
         return result;
@@ -50,7 +50,7 @@ public final class InputPathParser {
 
         Path startDir = extractStartDirectory(wildcard);
         if (!Files.exists(startDir) || !Files.isDirectory(startDir)) {
-            throw new IllegalArgumentException("Директория не найдена: " + startDir);
+            throw ParserUtils.invalidArgument("Директория не найдена: " + startDir);
         }
 
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + wildcard);
@@ -104,7 +104,7 @@ public final class InputPathParser {
         try {
             ParserUtils.validateExtension(path, SUPPORTED_LOG_EXTENSIONS);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
+            throw ParserUtils.invalidArgument(
                     "Неподдерживаемый формат файла: " + path + ". Разрешены только .log и .txt"
             );
         }
