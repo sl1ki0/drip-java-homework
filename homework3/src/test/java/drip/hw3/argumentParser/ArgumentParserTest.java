@@ -28,7 +28,7 @@ class ArgumentParserTest {
         });
 
         assertEquals(1, arguments.paths().size());
-        assertEquals(inputLog.toAbsolutePath().normalize(), arguments.paths().get(0));
+        assertEquals(inputLog.toAbsolutePath().normalize(), arguments.paths().getFirst());
         assertEquals("json", arguments.format());
         assertEquals(outputFile.normalize(), arguments.output());
         assertEquals("2025-03-01", arguments.from());
