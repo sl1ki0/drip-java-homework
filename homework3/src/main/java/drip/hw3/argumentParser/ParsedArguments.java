@@ -6,7 +6,7 @@ import java.util.List;
 public record ParsedArguments(
         List<Path> paths,
         String format,
-        String output,
+        Path output,
         String from,
         String to
 ) {}

@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public final class InputPathParser {
+    private static final String[] SUPPORTED_LOG_EXTENSIONS = {"log", "txt"};
 
     private InputPathParser() {
     }
 
     public static List<Path> resolvePath(String pathArg) {
-        if (pathArg == null || pathArg.isBlank()) {
-            throw new IllegalArgumentException("Путь к файлу не указан");
-        }
+        ParserUtils.requireNonBlank(pathArg, "Путь к файлу не указан");
 
         List<Path> result = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public final class InputPathParser {
                 throw new IllegalArgumentException("Это не файл: " + pathArg);
             }
 
-            validateExtension(path);
+            validateLogExtension(path);
             result.add(path.toAbsolutePath().normalize());
         }
 
@@ -55,12 +55,12 @@ public final class InputPathParser {
 
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + wildcard);
 
-        try {
-            Files.walk(startDir)
+        try (Stream<Path> paths = Files.walk(startDir)) {
+            paths
                     .filter(Files::isRegularFile)
                     .filter(matcher::matches)
                     .forEach(path -> {
-                        validateExtension(path);
+                        validateLogExtension(path);
                         result.add(path.toAbsolutePath().normalize());
                     });
         } catch (IOException e) {
@@ -100,10 +100,10 @@ public final class InputPathParser {
         return min == Integer.MAX_VALUE ? -1 : min;
     }
 
-    private static void validateExtension(Path path) {
-        String fileName = path.getFileName().toString().toLowerCase();
-
-        if (!(fileName.endsWith(".log") || fileName.endsWith(".txt"))) {
+    private static void validateLogExtension(Path path) {
+        try {
+            ParserUtils.validateExtension(path, SUPPORTED_LOG_EXTENSIONS);
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
                     "Неподдерживаемый формат файла: " + path + ". Разрешены только .log и .txt"
             );
