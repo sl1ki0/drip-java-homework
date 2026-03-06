@@ -14,7 +14,7 @@ public final class ArgumentParser {
 
     private ArgumentParser(){}
 
-    static List<> parseArguments(String[] args){
+    static List<ParsedArguments> parseArguments(String[] args){
         try {
             List<Path> paths = InputPathParser.resolvePath(args[0]);
         } catch (IllegalArgumentException e) {
