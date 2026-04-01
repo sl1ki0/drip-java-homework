@@ -1,0 +1,20 @@
+package drip.hw4.client;
+
+public class SpaceXApiException extends Exception {
+    private final int statusCode;
+    private final String responseBody;
+
+    public SpaceXApiException(int statusCode, String responseBody) {
+        super("HTTP " + statusCode + ": " + responseBody);
+        this.statusCode = statusCode;
+        this.responseBody = responseBody;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getResponseBody() {
+        return responseBody;
+    }
+}
