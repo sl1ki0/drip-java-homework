@@ -159,7 +159,7 @@ public class SpaceXLaunchService {
                 return Optional.empty();
             }
 
-            T data = parser.parse(cachedResponse.get().getBody());
+            T data = parser.parse(cachedResponse.get().body());
             return Optional.of(ServiceResponse.withoutNotice(data));
         } catch (IOException | JsonParsingException e) {
             return Optional.empty();
@@ -175,8 +175,8 @@ public class SpaceXLaunchService {
         try {
             Optional<CachedResponse> cachedResponse = apiCache.getValidCache(cacheFileName);
             if (cachedResponse.isPresent()) {
-                T data = parser.parse(cachedResponse.get().getBody());
-                String notice = buildCacheFallbackNotice(cachedResponse.get().getSavedAt());
+                T data = parser.parse(cachedResponse.get().body());
+                String notice = buildCacheFallbackNotice(cachedResponse.get().savedAt());
                 return ServiceResponse.withNotice(data, notice);
             }
         } catch (IOException | JsonParsingException e) {
