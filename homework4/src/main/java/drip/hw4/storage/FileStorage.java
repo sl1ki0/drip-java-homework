@@ -39,8 +39,8 @@ public class FileStorage {
         }
     }
 
-    public boolean exists(Path path) {
-        return Files.exists(path);
+    public boolean isMissing(Path path) {
+        return Files.notExists(path);
     }
 
     public void deleteIfExists(Path path) throws IOException {

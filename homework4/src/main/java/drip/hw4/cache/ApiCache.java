@@ -34,7 +34,7 @@ public class ApiCache {
 
     public Optional<CachedResponse> getValidCache(String fileName) throws IOException {
         Path cacheFile = cacheDirectory.resolve(fileName);
-        if (!fileStorage.exists(cacheFile)) {
+        if (fileStorage.isMissing(cacheFile)) {
             return Optional.empty();
         }
 
@@ -68,7 +68,7 @@ public class ApiCache {
     }
 
     private Map<String, String> readMetadata() throws IOException {
-        if (!fileStorage.exists(metadataFile)) {
+        if (fileStorage.isMissing(metadataFile)) {
             return new LinkedHashMap<>();
         }
 
