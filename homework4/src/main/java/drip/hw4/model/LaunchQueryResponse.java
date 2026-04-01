@@ -3,6 +3,7 @@ package drip.hw4.model;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class LaunchQueryResponse {
     private List<Launch> docs;
 

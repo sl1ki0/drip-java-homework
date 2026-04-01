@@ -27,7 +27,7 @@ public class LaunchPrinter {
         System.out.println("Номер: " + launch.getFlightNumber());
         System.out.println("Дата: " + safeText(launch.getDateUtc()));
         System.out.println("Успех: " + formatSuccess(launch.getSuccess()));
-        System.out.println("Описание: " + defaultIfBlank(launch.getDetails(), "нет данных"));
+        System.out.println("Описание: " + defaultIfBlank(launch.getDetails()));
     }
 
     private String extractDate(String dateUtc) {
@@ -45,12 +45,12 @@ public class LaunchPrinter {
     }
 
     private String safeText(String value) {
-        return defaultIfBlank(value, "нет данных");
+        return defaultIfBlank(value);
     }
 
-    private String defaultIfBlank(String value, String fallback) {
+    private String defaultIfBlank(String value) {
         if (value == null || value.isBlank()) {
-            return fallback;
+            return "нет данных";
         }
         return value;
     }

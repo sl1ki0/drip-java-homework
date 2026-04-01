@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Collections;
 import java.util.List;
-
+@SuppressWarnings("unused")
 public class Launch {
     private String id;
     private String name;

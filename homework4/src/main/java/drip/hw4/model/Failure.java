@@ -1,5 +1,6 @@
 package drip.hw4.model;
 
+@SuppressWarnings("unused")
 public class Failure {
     private Integer time;
     private Integer altitude;
