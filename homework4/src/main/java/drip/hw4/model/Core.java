@@ -2,10 +2,12 @@ package drip.hw4.model;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class Core {
     private String core;
     private Integer flight;
-    private Boolean gridfins;
+    @SerializedName("gridfins")
+    private Boolean gridFins;
     private Boolean legs;
     private Boolean reused;
     @SerializedName("landing_attempt")
@@ -14,7 +16,8 @@ public class Core {
     private Boolean landingSuccess;
     @SerializedName("landing_type")
     private String landingType;
-    private String landpad;
+    @SerializedName("landpad")
+    private String landingPad;
 
     public String getCore() {
         return core;
@@ -24,8 +27,8 @@ public class Core {
         return flight;
     }
 
-    public Boolean getGridfins() {
-        return gridfins;
+    public Boolean getGridFins() {
+        return gridFins;
     }
 
     public Boolean getLegs() {
@@ -48,7 +51,7 @@ public class Core {
         return landingType;
     }
 
-    public String getLandpad() {
-        return landpad;
+    public String getLandingPad() {
+        return landingPad;
     }
 }
