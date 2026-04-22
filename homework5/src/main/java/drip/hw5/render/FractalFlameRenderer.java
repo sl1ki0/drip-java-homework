@@ -4,6 +4,7 @@ import drip.hw5.config.RenderConfig;
 import drip.hw5.config.VariationConfig;
 import drip.hw5.logging.AppLogger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -17,6 +18,10 @@ public final class FractalFlameRenderer {
     private static final int WARMUP_ITERATIONS = 20;
     private static final int PROGRESS_CHUNKS = 10;
     private static final double BOUNDS_PADDING_RATIO = 0.05;
+    private static final int BOUNDS_SAMPLE_LIMIT = 20_000;
+    private static final double BOUNDS_LOWER_PERCENTILE = 0.01;
+    private static final double BOUNDS_UPPER_PERCENTILE = 0.99;
+    private static final double MAX_ABSOLUTE_COORDINATE = 1_000.0;
 
     private final AppLogger logger;
 
@@ -159,6 +164,13 @@ public final class FractalFlameRenderer {
             point = transform.apply(point);
             VariationConfig variation = variationSelector.select(random);
             point = VariationApplier.apply(variation.name(), point);
+
+            if (!isUsablePoint(point)) {
+                point = randomPoint(random);
+                currentColor = RgbColor.black();
+                continue;
+            }
+
             currentColor = currentColor.blend(transform.color());
 
             if (iteration < WARMUP_ITERATIONS) {
@@ -175,20 +187,22 @@ public final class FractalFlameRenderer {
         List<PreparedAffineTransform> transforms,
         WeightedSelector<VariationConfig> variationSelector
     ) {
-        int iterations = Math.max(2_000, config.iterationCount() * 2);
+        int iterations = Math.max(4_000, Math.min(config.iterationCount() * 2, 100_000));
         RandomGenerator random = RandomGeneratorFactory.of("L64X128MixRandom").create(config.seed());
         Point2D point = randomPoint(random);
+        List<Double> xValues = new ArrayList<>();
+        List<Double> yValues = new ArrayList<>();
 
-        double minX = Double.POSITIVE_INFINITY;
-        double maxX = Double.NEGATIVE_INFINITY;
-        double minY = Double.POSITIVE_INFINITY;
-        double maxY = Double.NEGATIVE_INFINITY;
-
-        for (int iteration = 0; iteration < iterations + WARMUP_ITERATIONS; iteration++) {
+        for (int iteration = 0; iteration < iterations + WARMUP_ITERATIONS && xValues.size() < BOUNDS_SAMPLE_LIMIT; iteration++) {
             PreparedAffineTransform transform = transforms.get(random.nextInt(transforms.size()));
             point = transform.apply(point);
             VariationConfig variation = variationSelector.select(random);
             point = VariationApplier.apply(variation.name(), point);
+
+            if (!isUsablePoint(point)) {
+                point = randomPoint(random);
+                continue;
+            }
 
             if (iteration < WARMUP_ITERATIONS) {
                 continue;
@@ -196,16 +210,24 @@ public final class FractalFlameRenderer {
 
             for (int symmetryIndex = 0; symmetryIndex < config.symmetryLevel(); symmetryIndex++) {
                 Point2D rotated = rotate(point, symmetryIndex, config.symmetryLevel());
-                minX = Math.min(minX, rotated.x());
-                maxX = Math.max(maxX, rotated.x());
-                minY = Math.min(minY, rotated.y());
-                maxY = Math.max(maxY, rotated.y());
+                if (!isUsablePoint(rotated)) {
+                    continue;
+                }
+                xValues.add(rotated.x());
+                yValues.add(rotated.y());
             }
         }
 
-        if (!Double.isFinite(minX) || !Double.isFinite(maxX) || !Double.isFinite(minY) || !Double.isFinite(maxY)) {
+        if (xValues.isEmpty() || yValues.isEmpty()) {
             return new RenderBounds(-1.0, 1.0, -1.0, 1.0);
         }
+
+        Collections.sort(xValues);
+        Collections.sort(yValues);
+        double minX = percentile(xValues, BOUNDS_LOWER_PERCENTILE);
+        double maxX = percentile(xValues, BOUNDS_UPPER_PERCENTILE);
+        double minY = percentile(yValues, BOUNDS_LOWER_PERCENTILE);
+        double maxY = percentile(yValues, BOUNDS_UPPER_PERCENTILE);
 
         if (minX == maxX) {
             minX -= 1.0;
@@ -291,5 +313,17 @@ public final class FractalFlameRenderer {
     private void logProgress(int done, int total) {
         int percent = (int) Math.round(done * 100.0 / total);
         logger.info("Render progress: %d%%".formatted(percent));
+    }
+
+    private boolean isUsablePoint(Point2D point) {
+        return Double.isFinite(point.x())
+            && Double.isFinite(point.y())
+            && Math.abs(point.x()) <= MAX_ABSOLUTE_COORDINATE
+            && Math.abs(point.y()) <= MAX_ABSOLUTE_COORDINATE;
+    }
+
+    private double percentile(List<Double> values, double percentile) {
+        int index = (int) Math.floor((values.size() - 1) * percentile);
+        return values.get(Math.max(0, Math.min(values.size() - 1, index)));
     }
 }
