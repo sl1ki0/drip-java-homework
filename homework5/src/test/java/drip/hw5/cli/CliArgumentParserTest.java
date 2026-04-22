@@ -64,4 +64,14 @@ class CliArgumentParserTest {
 
         assertEquals("Missing value for argument: --width", exception.getMessage());
     }
+
+    @Test
+    void rejectsInvalidAffineTransformLength() {
+        CommandLineException exception = assertThrows(
+            CommandLineException.class,
+            () -> parser.parse(new String[] {"--affine-params", "0.1,0.2,0.3"})
+        );
+
+        assertEquals("Each affine transform must contain 6 coefficients: 0.1,0.2,0.3", exception.getMessage());
+    }
 }
