@@ -33,6 +33,10 @@ public final class FractalFlameRenderer {
         logger.info("Bounds estimated: minX=%.4f maxX=%.4f minY=%.4f maxY=%.4f"
             .formatted(bounds.minX(), bounds.maxX(), bounds.minY(), bounds.maxY()));
 
+        logger.info(config.threads() == 1
+            ? "Rendering in single-thread mode."
+            : "Rendering in multi-thread mode with %d threads.".formatted(config.threads()));
+
         return config.threads() == 1
             ? renderSingleThread(config, transforms, variationSelector, bounds)
             : renderMultiThread(config, transforms, variationSelector, bounds);
@@ -105,10 +109,11 @@ public final class FractalFlameRenderer {
         int chunkIndex
     ) {
         List<Callable<FlameImageBuffer>> tasks = new ArrayList<>();
-        int baseIterations = totalChunkIterations / config.threads();
-        int remainder = totalChunkIterations % config.threads();
+        int workerCount = Math.min(config.threads(), Math.max(1, totalChunkIterations));
+        int baseIterations = totalChunkIterations / workerCount;
+        int remainder = totalChunkIterations % workerCount;
 
-        for (int workerIndex = 0; workerIndex < config.threads(); workerIndex++) {
+        for (int workerIndex = 0; workerIndex < workerCount; workerIndex++) {
             int iterations = baseIterations + (workerIndex < remainder ? 1 : 0);
             if (iterations == 0) {
                 continue;

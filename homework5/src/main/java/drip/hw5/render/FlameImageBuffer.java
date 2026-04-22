@@ -60,6 +60,14 @@ public final class FlameImageBuffer {
         return false;
     }
 
+    public long totalHits() {
+        long total = 0L;
+        for (long hit : hits) {
+            total += hit;
+        }
+        return total;
+    }
+
     public BufferedImage toBufferedImage() {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         long maxHits = 0L;
