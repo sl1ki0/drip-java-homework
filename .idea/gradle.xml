@@ -12,6 +12,15 @@
         </option>
         <option name="myGradleHome" value="" />
       </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/homework6" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/homework6" />
+          </set>
+        </option>
+        <option name="myGradleHome" value="" />
+      </GradleProjectSettings>
     </option>
   </component>
 </project>
