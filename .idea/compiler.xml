@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="homework5" target="21" />
-      <module name="homework5.main" target="21" />
-      <module name="homework5.test" target="21" />
+      <module name="homework4" target="21" />
+      <module name="homework4.main" target="21" />
+      <module name="homework4.test" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
